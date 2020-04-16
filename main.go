@@ -1,8 +1,7 @@
 package main
 
 import (
-	"golang/ch1"
-	"net/http"
+	"golang/ch2"
 )
 
 func main() {
@@ -21,6 +20,11 @@ func main() {
 	//**************************//
 
 	//*************网络服务器*************//
-	http.HandleFunc("/test", ch1.Handle)
-	http.ListenAndServe("localhost:8000", nil)
+	// http.HandleFunc("/test", ch1.Handle)
+	// http.ListenAndServe("localhost:8000", nil)
+
+	//--------------ch2示例函数--------------//
+	ch2.Echo4()
+	ch2.Gcd(9800, 400)
+	ch2.Fib(1)
 }
