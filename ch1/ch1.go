@@ -121,7 +121,7 @@ func Dup3() {
 	return
 }
 
-// Lissajous利萨茹图形
+// Lissajous 利萨茹图形
 func Lissajous() {
 	rand.Seed(time.Now().UTC().UnixNano())
 	handler := func(w http.ResponseWriter, r *http.Request) {
@@ -134,15 +134,16 @@ func Lissajous() {
 
 func lissajous(out io.Writer) {
 	const (
-		cycles     = 5
+		cycles     = 15
 		res        = 0.001
-		size       = 100
+		size       = 300
 		nframes    = 64
 		delay      = 8
 		whiteIndex = 0
 		blackIndex = 1
 	)
-	palette := []color.Color{color.White, color.Black}
+	// palette := []color.Color{color.White, color.Black}
+	palette := []color.Color{color.RGBA{0x0, 0x0, 0x0, 0xff}, color.RGBA{0x0, 0xff, 0x0, 0xff}, color.RGBA{0x0, 0x0, 0xff, 0xff}}
 	freq := rand.Float64() * 3.0
 	anim := gif.GIF{LoopCount: nframes}
 	phase := 0.0
@@ -152,7 +153,7 @@ func lissajous(out io.Writer) {
 		for t := 0.0; t < cycles*2*math.Pi; t += res {
 			x := math.Sin(t)
 			y := math.Sin(t*freq + phase)
-			img.SetColorIndex(size+int(x*size+0.5), size+int(y*size+0.5), blackIndex)
+			img.SetColorIndex(size+int(x*size+0.5), size+int(y*size+0.5), 1)
 		}
 		phase += 0.1
 		anim.Delay = append(anim.Delay, delay)
@@ -160,4 +161,40 @@ func lissajous(out io.Writer) {
 	}
 	gif.EncodeAll(out, &anim)
 	return
+}
+
+// Fetch 简易版爬虫
+func Fetch(url string) {
+	resp, err := http.Get(url)
+	if err != nil {
+		fmt.Println("request " + url + " fail")
+		return
+	}
+	defer resp.Body.Close()
+	// b, err := ioutil.ReadAll(resp.Body)
+	io.Copy(os.Stdout, resp.Body)
+	return
+}
+
+// ParallelFetch 并行爬虫
+func ParallelFetch(url string, ch chan<- string) {
+	resp, err := http.Get(url)
+	if err != nil {
+		strMsg := url + " request fail"
+		ch <- strMsg
+	}
+	nbytes, err := io.Copy(ioutil.Discard, resp.Body)
+	ch <- url + " request success,byte=" + fmt.Sprintf("%d", nbytes)
+	return
+}
+
+//Handle 服务器
+func Handle(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(r.URL)
+	fmt.Println(r.URL.Query())
+	r.ParseForm()
+	for key, val := range r.Form {
+		fmt.Println("key:" + fmt.Sprintf("%v", key))
+		fmt.Fprintf(w, "param[%q]=%q", key, val)
+	}
 }
