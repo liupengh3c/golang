@@ -27,4 +27,5 @@ func main() {
 	ch2.Echo4()
 	ch2.Gcd(9800, 400)
 	ch2.Fib(1)
+	ch2.Area()
 }
