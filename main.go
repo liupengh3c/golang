@@ -1,6 +1,9 @@
 package main
 
-import "golang/ch3"
+import (
+	"fmt"
+	"golang/ch3"
+)
 
 func main() {
 	// ch1.GetStdCmd()
@@ -34,4 +37,12 @@ func main() {
 	ch3.Basename2("/home/work/leart/tool.go")
 
 	ch3.Comma("123433433433")
+	ch3.Strings("iam have a dream iam", "iam")
+	s := []int{}
+	for i := 0; i < 10; i++ {
+		s = append(s, i)
+	}
+	fmt.Println(ch3.IntsToString(s))
+	ch3.Translate()
+	ch3.Const()
 }

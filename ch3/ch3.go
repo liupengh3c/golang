@@ -1,7 +1,9 @@
 package ch3
 
 import (
+	"bytes"
 	"fmt"
+	"strconv"
 	"strings"
 	"unicode/utf8"
 )
@@ -64,4 +66,80 @@ func comma(s string) string {
 		return s
 	}
 	return comma(s[:n-3]) + "," + s[n-3:]
+}
+
+// Strings 字符串函数
+func Strings(s, sub string) {
+	if strings.Contains(s, sub) {
+		fmt.Println(sub + " is in " + s)
+	} else {
+		fmt.Println(sub + " is not in " + s)
+	}
+	fmt.Println(s + " have " + fmt.Sprintf("%d", strings.Count(s, sub)) + " " + sub)
+	if strings.HasPrefix(s, sub) {
+		fmt.Println(s + " is begin with " + sub)
+	} else {
+		fmt.Println(s + " is not begin with " + sub)
+	}
+
+	if strings.HasSuffix(s, sub) {
+		fmt.Println(s + " is end with " + sub)
+	} else {
+		fmt.Println(s + " is not end with " + sub)
+	}
+
+	fmt.Println("index is " + fmt.Sprintf("%d", strings.Index(s, sub)))
+
+	fmt.Println([]string{"i", "am", "student"}, "&")
+}
+
+// Bytes 函数
+func Bytes(s, sub []byte) {
+	if bytes.Contains(s, sub) {
+		fmt.Println(string(sub) + " is in " + string(s))
+	}
+	fmt.Println(string(s) + " have " + fmt.Sprintf("%d", bytes.Count(s, sub)) + " " + string(sub))
+}
+
+// IntsToString 将数组以字符串形式打印出来
+func IntsToString(values []int) string {
+	var buf bytes.Buffer
+	buf.WriteByte('[')
+	for k, val := range values {
+		if k > 0 {
+			buf.WriteString(",")
+		}
+		fmt.Fprintf(&buf, "%d", val)
+	}
+	buf.WriteByte(']')
+	return buf.String()
+}
+
+// Translate 字符串、数字转换
+func Translate() {
+	s := "123"
+	t, _ := strconv.Atoi(s)
+	a := strconv.Itoa(t + 1)
+	fmt.Println(a)
+}
+
+// Const 常量
+func Const() {
+	const (
+		a = iota
+		b
+		c
+		d
+	)
+	fmt.Println(b)
+	const (
+		s = 1 << iota
+		t
+		r
+		u
+	)
+	v := 15
+	w := 1
+	fmt.Println(fmt.Sprintf("%b", u))
+	fmt.Println(w &^ v)
 }
