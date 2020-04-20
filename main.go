@@ -1,8 +1,6 @@
 package main
 
-import (
-	"golang/ch2"
-)
+import "golang/ch3"
 
 func main() {
 	// ch1.GetStdCmd()
@@ -24,8 +22,16 @@ func main() {
 	// http.ListenAndServe("localhost:8000", nil)
 
 	//--------------ch2示例函数--------------//
-	ch2.Echo4()
-	ch2.Gcd(9800, 400)
-	ch2.Fib(1)
-	ch2.Area()
+	// ch2.Echo4()
+	// ch2.Gcd(9800, 400)
+	// ch2.Fib(1)
+	// ch2.Area()
+
+	//--------------ch3示例函数--------------//
+	// ch3.Unicode()
+	ch3.Basename("/home/work/leart/tool.go")
+
+	ch3.Basename2("/home/work/leart/tool.go")
+
+	ch3.Comma("123433433433")
 }
