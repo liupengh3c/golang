@@ -12,6 +12,8 @@ func Ch4() {
 	// 数组指针测试
 	arrayP(&s)
 	popcount(14)
+	appendInt()
+	noempty()
 }
 
 // Sha 加密
@@ -40,4 +42,44 @@ func popcount(x int64) {
 	}
 	cnt = int(pc[byte(x>>(0*8))] + pc[byte(x>>(1*8))] + pc[byte(x>>(2*8))] + pc[byte(x>>(3*8))] + pc[byte(x>>(4*8))] + pc[byte(x>>(5*8))] + pc[byte(x>>(6*8))] + pc[byte(x>>(7*8))])
 	fmt.Println(cnt)
+	// fmt.Printf("%T %[1]d", pc)
+}
+
+func appendInt() {
+	var x []int
+	fmt.Println(len(x), cap(x))
+	for i := 0; i < 20; i++ {
+		x = append(x, i)
+		fmt.Printf("%d\tcap=%d\t%v\n", i, cap(x), x)
+	}
+}
+
+func noempty() {
+	s := []string{"ab", "", "art"}
+	// fmt.Println(nonempty(s))
+	// fmt.Printf("%q\n", nonempty(s))
+	fmt.Println("nonempt2 function test,appen func")
+	fmt.Printf("%q\n", nonempty2(s))
+}
+func nonempty(str []string) []string {
+	i := 0
+	for _, v := range str {
+		if v != "" {
+			str[i] = v
+			i++
+		}
+	}
+	return str[:i]
+}
+
+func nonempty2(str []string) []string {
+	var s []string
+	for _, v := range str {
+		if v != "" {
+			fmt.Println(v)
+			s = append(s, v)
+		}
+	}
+	fmt.Println(s)
+	return s
 }
