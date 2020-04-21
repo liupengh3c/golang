@@ -115,6 +115,20 @@ func IntsToString(values []int) string {
 	return buf.String()
 }
 
+// Comma2 非递归
+func Comma2(v string) {
+	var buf bytes.Buffer
+	sep := 3
+	l := len(v)
+	for i := 0; i < l; i++ {
+		if (l-i)%sep == 0 && i != 0 {
+			buf.WriteString(",")
+		}
+		buf.WriteByte(v[i])
+	}
+	fmt.Println(buf.String())
+}
+
 // Translate 字符串、数字转换
 func Translate() {
 	s := "123"
@@ -138,8 +152,37 @@ func Const() {
 		r
 		u
 	)
-	v := 15
+	v := 0xa
 	w := 1
 	fmt.Println(fmt.Sprintf("%b", u))
+	// a &^ b 的意思就是 将b中为1的位 对应于a的位清0， a中其他位不变
 	fmt.Println(w &^ v)
+}
+
+// IsSame 判断字符串是否同文艺构，拥有相同的字符，但是排列顺序不同
+func IsSame(s1, s2 string) bool {
+	flg := true
+	m1 := make(map[rune]int)
+	m2 := make(map[rune]int)
+	if len(s1) != len(s2) {
+		return false
+	}
+	for _, val := range s1 {
+		m1[val]++
+	}
+	for _, val := range s2 {
+		m2[val]++
+	}
+	for k, v := range m1 {
+		if _, ok := m2[k]; ok {
+			if v != m2[k] {
+				flg = false
+				break
+			}
+		} else {
+			flg = false
+			break
+		}
+	}
+	return flg
 }

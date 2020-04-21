@@ -1,8 +1,7 @@
 package main
 
 import (
-	"fmt"
-	"golang/ch3"
+	"golang/ch4"
 )
 
 func main() {
@@ -32,17 +31,26 @@ func main() {
 
 	//--------------ch3示例函数--------------//
 	// ch3.Unicode()
-	ch3.Basename("/home/work/leart/tool.go")
+	// ch3.Basename("/home/work/leart/tool.go")
 
-	ch3.Basename2("/home/work/leart/tool.go")
+	// ch3.Basename2("/home/work/leart/tool.go")
 
-	ch3.Comma("123433433433")
-	ch3.Strings("iam have a dream iam", "iam")
-	s := []int{}
-	for i := 0; i < 10; i++ {
-		s = append(s, i)
-	}
-	fmt.Println(ch3.IntsToString(s))
-	ch3.Translate()
-	ch3.Const()
+	// ch3.Comma("123433433433")
+	// ch3.Strings("iam have a dream iam", "iam")
+	// s := []int{}
+	// for i := 0; i < 10; i++ {
+	// 	s = append(s, i)
+	// }
+	// fmt.Println(ch3.IntsToString(s))
+	// ch3.Translate()
+	// ch3.Const()
+	// if ch3.IsSame("banlace", "banlace") {
+	// 	fmt.Println("is same")
+	// } else {
+	// 	fmt.Println("is not same")
+	// }
+	// ch3.Comma2("123455712")
+
+	//--------------ch4示例函数--------------//
+	ch4.Ch4()
 }
