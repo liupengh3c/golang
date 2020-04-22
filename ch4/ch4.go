@@ -3,17 +3,21 @@ package ch4
 import (
 	"crypto/sha256"
 	"fmt"
+	"time"
+
+	"math/rand"
 )
 
 // Ch4 第四章测试函数
 func Ch4() {
-	s := [2]int{4, 8}
-	sha()
+	// s := [2]int{4, 8}
+	// sha()
 	// 数组指针测试
-	arrayP(&s)
-	popcount(14)
-	appendInt()
-	noempty()
+	// arrayP(&s)
+	// popcount(14)
+	// appendInt()
+	// noempty()
+	sort()
 }
 
 // Sha 加密
@@ -84,18 +88,38 @@ func nonempty2(str []string) []string {
 	return s
 }
 
-// 二叉树实现实现插入排序
+// 二叉树实现实现插入排序11111111111111
 type tree struct {
-	value int
+	value int32
 	left  *tree
 	right *tree
 }
 
+// sort 排序
+func sort() {
+	var data []int32
+	var s []int32
+	var root *tree
+	rand.Seed(time.Now().UnixNano())
+	for i := 0; i < 20; i++ {
+		data = append(data, rand.Int31n(100))
+	}
+	fmt.Println(data)
+	for _, val := range data {
+		root = add(root, val)
+	}
+	s = appendVal(s, root)
+	fmt.Println(s)
+}
+
 // add 将value插入二叉树中，左小右大
-func add(t *tree, value int) *tree {
+func add(t *tree, value int32) *tree {
 	if t == nil {
 		t = new(tree)
 		t.value = value
+		t.left = nil
+		t.right = nil
+		return t
 	}
 	if value < t.value {
 		t.left = add(t.left, value)
@@ -105,7 +129,12 @@ func add(t *tree, value int) *tree {
 	return t
 }
 
-func appendVal(values []int, t *tree) []int {
-
+// appendVal 将二叉树中的数据放入slice中
+func appendVal(values []int32, t *tree) []int32 {
+	if t != nil {
+		values = appendVal(values, t.left)
+		values = append(values, t.value)
+		values = appendVal(values, t.right)
+	}
 	return values
 }
