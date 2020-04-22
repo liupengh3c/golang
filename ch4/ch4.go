@@ -83,3 +83,23 @@ func nonempty2(str []string) []string {
 	fmt.Println(s)
 	return s
 }
+
+// 二叉树实现实现插入排序
+type tree struct {
+	value int
+	left  *tree
+	right *tree
+}
+
+func add(t *tree, value int) *tree {
+	if t == nil {
+		t = new(tree)
+		t.value = value
+	}
+	if value < t.value {
+		t.left = add(t.left, value)
+	} else {
+		t.right = add(t.right, value)
+	}
+	return t
+}
