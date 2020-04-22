@@ -91,6 +91,7 @@ type tree struct {
 	right *tree
 }
 
+// add 将value插入二叉树中，左小右大
 func add(t *tree, value int) *tree {
 	if t == nil {
 		t = new(tree)
@@ -102,4 +103,9 @@ func add(t *tree, value int) *tree {
 		t.right = add(t.right, value)
 	}
 	return t
+}
+
+func appendVal(values []int, t *tree) []int {
+
+	return values
 }
