@@ -2,8 +2,8 @@ package ch4
 
 import (
 	"crypto/sha256"
+	"encoding/json"
 	"fmt"
-	"time"
 
 	"math/rand"
 )
@@ -18,6 +18,7 @@ func Ch4() {
 	// appendInt()
 	// noempty()
 	sort()
+	makeWheel()
 }
 
 // Sha 加密
@@ -88,7 +89,7 @@ func nonempty2(str []string) []string {
 	return s
 }
 
-// 二叉树实现实现插入排序11111111111111
+// 二叉树实现实现插入排序，左小，右大
 type tree struct {
 	value int32
 	left  *tree
@@ -100,14 +101,18 @@ func sort() {
 	var data []int32
 	var s []int32
 	var root *tree
-	rand.Seed(time.Now().UnixNano())
-	for i := 0; i < 20; i++ {
+	// rand.Seed(time.Now().UnixNano())
+	for i := 0; i < 5; i++ {
 		data = append(data, rand.Int31n(100))
 	}
 	fmt.Println(data)
 	for _, val := range data {
 		root = add(root, val)
+		fmt.Println(root.value)
 	}
+	// fmt.Println(root.value)
+	// fmt.Println(root.left.value)
+	// fmt.Println(root.right.value)
 	s = appendVal(s, root)
 	fmt.Println(s)
 }
@@ -137,4 +142,40 @@ func appendVal(values []int32, t *tree) []int32 {
 		values = appendVal(values, t.right)
 	}
 	return values
+}
+
+/*************************结构体嵌套/匿名成员**************************/
+// success is the ability to go from one failure to another with no loss of enthusiasm
+// 定义一个点
+type point struct {
+	X, Y int32
+}
+
+// 定义一个圆
+type circle struct {
+	point
+	Radius int32
+}
+
+// 定义一个轮子
+type wheel struct {
+	circle
+	spokes int32 // 条辅个数
+}
+
+// makeWheel 实例一个5辐条的轮子
+func makeWheel() {
+	var wh wheel
+	wh.X = 0
+	wh.Y = 0
+	wh.Radius = 10
+	wh.spokes = 5
+	fmt.Printf("%#v\n", wh)
+	fmt.Printf("%+v\n", wh)
+	// json 打印出来
+	s, _ := json.Marshal(wh)
+	fmt.Printf("%s\n", s)
+
+	s, _ = json.MarshalIndent(wh, "", "	")
+	fmt.Printf("%s\n", s)
 }
