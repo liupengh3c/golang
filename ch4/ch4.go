@@ -4,8 +4,12 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
-
 	"math/rand"
+	"net/http"
+	"net/url"
+	"os"
+	"strings"
+	"time"
 )
 
 // Ch4 第四章测试函数
@@ -19,6 +23,8 @@ func Ch4() {
 	// noempty()
 	sort()
 	makeWheel()
+	// search()
+	searchMovie()
 }
 
 // Sha 加密
@@ -180,15 +186,81 @@ func makeWheel() {
 	fmt.Printf("%s\n", s)
 }
 
-const url = "https://api.github.com/search/issues"
+const issueUrl = "https://api.github.com/search/issues"
+
+type issuesSearchResult struct {
+	TotalCount int `json:"total_count"`
+	Items      []*issues
+}
 
 //
 type issues struct {
-	TotalCount int    `json:"total_count"`
-	HTMLURL    string `json:"html_url"`
+	Number   int
+	HTMLURL  string `json:"html_url"`
+	Title    string
+	State    string
+	User     *user
+	CreateAt time.Time `json:"created_at"`
+	Body     string
+}
+type user struct {
+	Login   string
+	HTMLURL string `json:"html_url"`
 }
 
-type issuesSearchResult struct {
-	Number  int
-	HTMLURL string `json:"html_url"`
+func searchIssues(terms []string) (*issuesSearchResult, error) {
+	var result issuesSearchResult
+	q := url.QueryEscape(strings.Join(terms, " "))
+	resp, err := http.Get(issueUrl + "?=" + q + "&sort=created&order=asc")
+	if err != nil {
+		fmt.Println("req github error")
+		fmt.Println(err.Error())
+		return nil, err
+	}
+	fmt.Println()
+	json.NewDecoder(resp.Body).Decode(&result)
+	resp.Body.Close()
+	return &result, nil
+}
+
+type movie struct {
+	Month string `json:"month"`
+	// Num        int32  `json:"num"`
+	// Link       string `json:"link"`
+	// Year       string `json:"year"`
+	// News       string `json:"news"`
+	// SafeTitle  string `json:"safe_title"`
+	// Transcript string `json:"transcript"`
+	// Alt        string `json:"alt"`
+	// Img        string `json:"img"`
+	Title string `json:"tilte"`
+	// Day        string `json:"day"`
+}
+
+func searchMovie() {
+	mov := new(movie)
+	strUrl := "http://xkcd.com/571/info.0.json"
+	resp, err := http.Get(strUrl)
+	if err != nil {
+		fmt.Println("req url err " + err.Error())
+		return
+	}
+	err = json.NewDecoder(resp.Body).Decode(mov)
+	fmt.Println(resp.Status)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	fmt.Println(mov.Title)
+}
+func search() {
+	result, err := searchIssues(os.Args[1:])
+	if err != nil {
+		return
+	}
+	fmt.Println(fmt.Sprintf("%d issues", result.TotalCount))
+	for _, val := range result.Items {
+		fmt.Printf("#%-5d %9.9s %.55s\n", val.Number, val.User.Login, val.Title)
+	}
+	return
 }
