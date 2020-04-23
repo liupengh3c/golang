@@ -179,3 +179,16 @@ func makeWheel() {
 	s, _ = json.MarshalIndent(wh, "", "	")
 	fmt.Printf("%s\n", s)
 }
+
+const url = "https://api.github.com/search/issues"
+
+//
+type issues struct {
+	TotalCount int    `json:"total_count"`
+	HTMLURL    string `json:"html_url"`
+}
+
+type issuesSearchResult struct {
+	Number  int
+	HTMLURL string `json:"html_url"`
+}
