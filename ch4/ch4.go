@@ -21,8 +21,8 @@ func Ch4() {
 	// popcount(14)
 	// appendInt()
 	// noempty()
-	sort()
-	makeWheel()
+	// sort()
+	// makeWheel()
 	// search()
 	searchMovie()
 }
@@ -186,7 +186,7 @@ func makeWheel() {
 	fmt.Printf("%s\n", s)
 }
 
-const issueUrl = "https://api.github.com/search/issues"
+const issueURL = "https://api.github.com/search/issues"
 
 type issuesSearchResult struct {
 	TotalCount int `json:"total_count"`
@@ -211,7 +211,7 @@ type user struct {
 func searchIssues(terms []string) (*issuesSearchResult, error) {
 	var result issuesSearchResult
 	q := url.QueryEscape(strings.Join(terms, " "))
-	resp, err := http.Get(issueUrl + "?=" + q + "&sort=created&order=asc")
+	resp, err := http.Get(issueURL + "?=" + q + "&sort=created&order=asc")
 	if err != nil {
 		fmt.Println("req github error")
 		fmt.Println(err.Error())
@@ -223,7 +223,8 @@ func searchIssues(terms []string) (*issuesSearchResult, error) {
 	return &result, nil
 }
 
-type movie struct {
+// Movie 电影描述
+type Movie struct {
 	Month string `json:"month"`
 	// Num        int32  `json:"num"`
 	// Link       string `json:"link"`
@@ -233,25 +234,36 @@ type movie struct {
 	// Transcript string `json:"transcript"`
 	// Alt        string `json:"alt"`
 	// Img        string `json:"img"`
-	Title string `json:"tilte"`
+	Title string `json:"title"`
 	// Day        string `json:"day"`
 }
 
+// Movies 多个
+type Movies struct {
+	Items      []*Movie
+	TotalCount int
+}
+
 func searchMovie() {
-	mov := new(movie)
-	strUrl := "http://xkcd.com/571/info.0.json"
-	resp, err := http.Get(strUrl)
+	mov := new(Movies)
+	strURL := "http://10.145.78.105:8089/test"
+	resp, err := http.Get(strURL)
 	if err != nil {
 		fmt.Println("req url err " + err.Error())
 		return
 	}
-	err = json.NewDecoder(resp.Body).Decode(mov)
 	fmt.Println(resp.Status)
+
+	err = json.NewDecoder(resp.Body).Decode(mov)
+	// bytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
-	fmt.Println(mov.Title)
+	// json.Unmarshal(bytes, mov)
+	str, _ := json.Marshal(mov)
+	fmt.Println(string(str))
+	return
 }
 func search() {
 	result, err := searchIssues(os.Args[1:])
@@ -263,4 +275,22 @@ func search() {
 		fmt.Printf("#%-5d %9.9s %.55s\n", val.Number, val.User.Login, val.Title)
 	}
 	return
+}
+
+func daysAgo(v int) int {
+	return v
+}
+
+// Text 模板
+func text() {
+	const temp = `
+		{{.TotalCount}} movies:
+		{{range .Items}}
+		Month: {{.Month}}
+		Title: {{.Title}}
+		CalCount:{{.TotalCount | printf "%.64s"}}
+		FunCount:{{.TotalCount | daysAgo}}
+		{{end}}
+	`
+
 }
