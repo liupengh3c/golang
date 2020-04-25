@@ -1,7 +1,7 @@
 package main
 
 import (
-	"golang/ch4"
+	"golang/ch5"
 )
 
 func main() {
@@ -18,7 +18,7 @@ func main() {
 	// 	fmt.Println(<-ch)
 	// }
 	//**************************//
-
+	// ch1.Fetch("http://www.baidu.com")
 	//*************网络服务器*************//
 	// http.HandleFunc("/test", ch1.Handle)
 	// http.ListenAndServe("localhost:8000", nil)
@@ -52,5 +52,9 @@ func main() {
 	// ch3.Comma2("123455712")
 
 	//--------------ch4示例函数--------------//
-	ch4.Ch4()
+	// ch4.Ch4()
+
+	//--------------ch5示例函数--------------//
+	ch5.Ch5()
+
 }
