@@ -9,6 +9,9 @@ import (
 	"net/url"
 	"os"
 	"strings"
+
+	// "text/template"
+	"html/template"
 	"time"
 )
 
@@ -24,7 +27,9 @@ func Ch4() {
 	// sort()
 	// makeWheel()
 	// search()
-	searchMovie()
+	// searchMovie()
+	// text()
+	Html()
 }
 
 // Sha 加密
@@ -226,7 +231,7 @@ func searchIssues(terms []string) (*issuesSearchResult, error) {
 // Movie 电影描述
 type Movie struct {
 	Month string `json:"month"`
-	// Num        int32  `json:"num"`
+	Num   int32  `json:"num"`
 	// Link       string `json:"link"`
 	// Year       string `json:"year"`
 	// News       string `json:"news"`
@@ -244,13 +249,13 @@ type Movies struct {
 	TotalCount int
 }
 
-func searchMovie() {
+func searchMovie() *Movies {
 	mov := new(Movies)
 	strURL := "http://10.145.78.105:8089/test"
 	resp, err := http.Get(strURL)
 	if err != nil {
 		fmt.Println("req url err " + err.Error())
-		return
+		return mov
 	}
 	fmt.Println(resp.Status)
 
@@ -258,12 +263,12 @@ func searchMovie() {
 	// bytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Println(err.Error())
-		return
+		return mov
 	}
 	// json.Unmarshal(bytes, mov)
 	str, _ := json.Marshal(mov)
 	fmt.Println(string(str))
-	return
+	return mov
 }
 func search() {
 	result, err := searchIssues(os.Args[1:])
@@ -277,20 +282,47 @@ func search() {
 	return
 }
 
-func daysAgo(v int) int {
+func daysAgo(v int32) int32 {
 	return v
 }
 
 // Text 模板
-func text() {
-	const temp = `
-		{{.TotalCount}} movies:
-		{{range .Items}}
-		Month: {{.Month}}
-		Title: {{.Title}}
-		CalCount:{{.TotalCount | printf "%.64s"}}
-		FunCount:{{.TotalCount | daysAgo}}
-		{{end}}
-	`
+// func text() {
+// 	const temp = `
+// 		{{.TotalCount}} movies:
+// 		{{range .Items}}-------------------------------
+// 		Month: {{.Month}}
+// 		Title: {{.Title}}
+// 		Num:{{.Num | printf "%.d"}}
+// 		Num:{{.Num | daysAgo}}
+// 		{{end}}
+// 	`
+// 	var report = template.Must(template.New("movie").Funcs(template.FuncMap{"daysAgo": daysAgo}).Parse(temp))
+// 	result := searchMovie()
+// 	report.Execute(os.Stdout, result)
+// }
 
+// Html 模板
+func Html() {
+	var movie = template.Must(template.New("move").Parse(`
+		<h1>{{.TotalCount}}--movies</h1>
+		<table>
+			<tr style='text-align:left'>
+				<th>#</th>
+				<th>title</th>
+				<th>数目</th>
+				<th>数目,函数打印</th>
+			</tr>
+			{{range .Items}}
+			<tr>
+				<td>{{.Month}}</td>
+				<td>{{.Title}}</td>
+				<td>{{.Num}}</td>
+				<td>{{.Num}}</td>
+			</tr>
+			{{end}}
+		</table>
+	`))
+	result := searchMovie()
+	movie.Execute(os.Stdout, result)
 }
