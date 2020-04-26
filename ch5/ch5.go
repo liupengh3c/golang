@@ -34,9 +34,10 @@ type Node struct {
 func Ch5() {
 	// getHTML()
 	// proErr()
-	getHTML2()
+	// getHTML2()
 	// ch5Sort()
-	ch5Extract()
+	// ch5Extract()
+	bigSlow()
 }
 
 // fetch 简易版爬虫
@@ -239,4 +240,18 @@ func ch5Extract() {
 		fmt.Println(val)
 	}
 	return
+}
+
+// 延迟函数
+func bigSlow() {
+	defer trace("bigSlow")()
+	time.Sleep(10 * time.Second)
+}
+
+func trace(msg string) func() {
+	start := time.Now()
+	fmt.Printf("enter %s\n", msg)
+	return func() {
+		fmt.Printf("exit %s (%s)\n", msg, time.Since(start))
+	}
 }
