@@ -34,8 +34,9 @@ type Node struct {
 func Ch5() {
 	// getHTML()
 	// proErr()
-	// getHTML2()
-	ch5Sort()
+	getHTML2()
+	// ch5Sort()
+	ch5Extract()
 }
 
 // fetch 简易版爬虫
@@ -117,6 +118,7 @@ var depth int
 
 func startElement(n *html.Node) {
 	if n.Type == html.ElementNode {
+		// %*s中的*号输出带有可变数量空格的字符串，输出宽度由depth*2和""决定
 		fmt.Printf("%*s<%s>\n", depth*2, "", n.Data)
 		depth++
 	}
@@ -124,8 +126,8 @@ func startElement(n *html.Node) {
 
 func endElement(n *html.Node) {
 	if n.Type == html.ElementNode {
-		fmt.Printf("%*s<%s>\n", depth*2, "", n.Data)
 		depth--
+		fmt.Printf("%*s<%s>\n", depth*2, "", n.Data)
 	}
 }
 
@@ -190,4 +192,51 @@ func ch5Sort() {
 	for i, course := range topoSort(prereqs) {
 		fmt.Printf("%d:\t%s\n", i+1, course)
 	}
+}
+
+func extract(url string) ([]string, error) {
+	resp, err := http.Get(url)
+	if err != nil {
+		// 错误处理的一种方式
+		return nil, fmt.Errorf("request url %s:%v", url, err)
+	}
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("request url %s,status:%v", url, resp.Status)
+	}
+	defer resp.Body.Close()
+	doc, err := html.Parse(resp.Body)
+
+	var links []string
+	visitNode := func(n *html.Node) {
+		if n.Type == html.ElementNode && n.Data == "a" {
+			for _, val := range n.Attr {
+				if val.Key != "href" {
+					continue
+				}
+
+				// 输出绝对路径，val.Val是相对路径
+				link, err := resp.Request.URL.Parse(val.Val)
+				if err != nil {
+					continue
+				}
+				links = append(links, link.String())
+				// links = append(links, val.Val)
+			}
+		}
+	}
+	forEachMode(doc, visitNode, nil)
+	return links, nil
+}
+
+func ch5Extract() {
+	url := "https://golang.google.cn/pkg/archive/zip/#OpenReader"
+	h, err := extract(url)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	for _, val := range h {
+		fmt.Println(val)
+	}
+	return
 }

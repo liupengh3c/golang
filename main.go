@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"golang/ch5"
 )
 
@@ -56,5 +57,8 @@ func main() {
 
 	//--------------ch5示例函数--------------//
 	ch5.Ch5()
-
+	var work = []int{1, 2}
+	var s = []int{3, 4}
+	work = append(work, s...)
+	fmt.Println(work)
 }
