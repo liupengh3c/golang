@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path"
 	"strings"
 	"time"
 
@@ -37,10 +38,11 @@ func Ch5() {
 	// getHTML2()
 	// ch5Sort()
 	// ch5Extract()
-	bigSlow()
+	// bigSlow()
+	fetch2("https://golang.google.cn/pkg/")
 }
 
-// fetch 简易版爬虫
+// 2 简易版爬虫
 func fetch(url string) *os.File {
 	var h = new(os.File)
 	s := time.Now()
@@ -242,7 +244,7 @@ func ch5Extract() {
 	return
 }
 
-// 延迟函数
+// 延迟函数,trace会首先执行，返回值函数会延迟执行
 func bigSlow() {
 	defer trace("bigSlow")()
 	time.Sleep(10 * time.Second)
@@ -254,4 +256,29 @@ func trace(msg string) func() {
 	return func() {
 		fmt.Printf("exit %s (%s)\n", msg, time.Since(start))
 	}
+}
+
+// 结合延迟函数的2
+func fetch2(url string) (filename string, n int64, err error) {
+	resp, err := http.Get(url)
+	if err != nil {
+		return "", 0, err
+	}
+	defer resp.Body.Close()
+	base := path.Base(resp.Request.URL.Path)
+	if base == "/" {
+		base = "index.html"
+	}
+	f, err := os.Create(base)
+	if err != nil {
+		return base, 0, err
+	}
+	// 在许多文件系统中，写文件错误往往不是立即返回，而是推迟到文件关闭的时候
+	// 如果无法无法检查关闭操作的结果，就会导致一系列的数据丢失，如果copy和close
+	// 同时失败，更加倾向于报告copy的错误，因为发生在前，失败原因更有价值
+	n, err = io.Copy(f, resp.Body)
+	if closeerr := f.Close(); err == nil {
+		err = closeerr
+	}
+	return base, n, err
 }
