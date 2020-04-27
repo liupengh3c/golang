@@ -1,8 +1,6 @@
 package main
 
-import (
-	"golang/ch5"
-)
+import "golang/ch6"
 
 func main() {
 	// ch1.GetStdCmd()
@@ -55,10 +53,12 @@ func main() {
 	// ch4.Ch4()
 
 	//--------------ch5示例函数--------------//
-	ch5.Ch5()
+	// ch5.Ch5()
 	// append函数，s后的省略号代表将整个slice追加到work
 	// var work = []int{1, 2}
 	// var s = []int{3, 4}
 	// work = append(work, s...)
 	// fmt.Println(work)
+	//--------------ch6示例函数--------------//
+	ch6.Ch6Main()
 }

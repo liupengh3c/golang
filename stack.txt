@@ -1,0 +1,19 @@
+goroutine 1 [running]:
+golang/ch5.ch5Defer.func1()
+	D:/study/golang/ch5/ch5.go:297 +0x62
+panic(0x65d9e0, 0x8b0580)
+	c:/go/src/runtime/panic.go:967 +0x174
+golang/ch5.f(0x0)
+	D:/study/golang/ch5/ch5.go:289 +0x1e3
+golang/ch5.f(0x1)
+	D:/study/golang/ch5/ch5.go:291 +0x184
+golang/ch5.f(0x2)
+	D:/study/golang/ch5/ch5.go:291 +0x184
+golang/ch5.f(0x3)
+	D:/study/golang/ch5/ch5.go:291 +0x184
+golang/ch5.ch5Defer()
+	D:/study/golang/ch5/ch5.go:301 +0x53
+golang/ch5.Ch5(...)
+	D:/study/golang/ch5/ch5.go:44
+main.main()
+	D:/study/golang/main.go:58 +0x27

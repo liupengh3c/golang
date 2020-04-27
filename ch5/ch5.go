@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"runtime"
 	"strings"
 	"time"
 
@@ -39,7 +40,8 @@ func Ch5() {
 	// ch5Sort()
 	// ch5Extract()
 	// bigSlow()
-	fetch2("https://golang.google.cn/pkg/")
+	// fetch2("https://golang.google.cn/pkg/")
+	ch5Defer()
 }
 
 // 2 简易版爬虫
@@ -281,4 +283,22 @@ func fetch2(url string) (filename string, n int64, err error) {
 		err = closeerr
 	}
 	return base, n, err
+}
+
+func f(x int) {
+	fmt.Printf("f(%d)\n", x+0/x)
+	defer fmt.Printf("defer %d\n", x)
+	f(x - 1)
+}
+
+// runtime包提供了保存异常堆栈信息的方法，线上服务可以
+// 利用runtime将异常打印到日志里
+func ch5Defer() {
+	defer func() {
+		var buf [4096]byte
+		n := runtime.Stack(buf[:], false)
+		f, _ := os.Create("stack.txt")
+		f.Write(buf[:n])
+	}()
+	f(3)
 }
