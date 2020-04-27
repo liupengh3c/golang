@@ -1,6 +1,7 @@
 package ch6
 
 import (
+	"bytes"
 	"fmt"
 	"math"
 )
@@ -107,4 +108,41 @@ func ch6List() {
 		}
 		node = node.next
 	}
+}
+
+type intset struct {
+	words []uint64
+}
+
+func (s *intset) Add(word int) {
+	index, bit := word/64, word%64
+	for index >= len(s.words) {
+		s.words = append(s.words, 0)
+	}
+	s.words[index] |= 1 << bit
+	return
+}
+func (s *intset) Has(word int) bool {
+	index, bit := word/64, word%64
+	return index <= len(s.words) && s.words[index]&(1<<bit) != 0
+}
+
+func (s *intset) String() string {
+	var buf bytes.Buffer
+	buf.WriteByte('{')
+	for k, word := range s.words {
+		if word == 0 {
+			continue
+		}
+		for j := 0; j < 64; j++ {
+			if word>>j&0x1 == 1 {
+				if buf.Len() > len("{") {
+					buf.WriteByte(' ')
+				}
+				fmt.Fprintf(&buf, "%d", 64*k+j)
+			}
+		}
+	}
+	buf.WriteByte('}')
+	return buf.String()
 }
