@@ -60,5 +60,5 @@ func main() {
 	// work = append(work, s...)
 	// fmt.Println(work)
 	//--------------ch6示例函数--------------//
-	ch6.Ch6Main()
+	ch6.Ch6()
 }

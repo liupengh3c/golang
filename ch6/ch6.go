@@ -8,9 +8,10 @@ import (
 
 // 2020-04-27 08:56
 
-// Ch6Main 第六章入口函数
-func Ch6Main() {
+// Ch6Enter 第六章入口函数
+func Ch6() {
 	ch6List()
+	ch6Vector()
 }
 
 type point struct {
@@ -114,7 +115,7 @@ type intset struct {
 	words []uint64
 }
 
-func (s *intset) Add(word int) {
+func (s *intset) add(word int) {
 	index, bit := word/64, word%64
 	for index >= len(s.words) {
 		s.words = append(s.words, 0)
@@ -122,12 +123,12 @@ func (s *intset) Add(word int) {
 	s.words[index] |= 1 << bit
 	return
 }
-func (s *intset) Has(word int) bool {
+func (s *intset) has(word int) bool {
 	index, bit := word/64, word%64
 	return index <= len(s.words) && s.words[index]&(1<<bit) != 0
 }
 
-func (s *intset) String() string {
+func (s *intset) string() string {
 	var buf bytes.Buffer
 	buf.WriteByte('{')
 	for k, word := range s.words {
@@ -145,4 +146,14 @@ func (s *intset) String() string {
 	}
 	buf.WriteByte('}')
 	return buf.String()
+}
+
+func ch6Vector() {
+	var word = new(intset)
+	word.add(1)
+	word.add(2)
+	word.add(3)
+	// slice中只有一个值，那就是0xe
+	fmt.Println(word.words)
+	fmt.Println(word.string())
 }
