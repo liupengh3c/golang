@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"net/http"
 	"os"
 	"sort"
 	"text/tabwriter"
@@ -170,4 +171,35 @@ func chSort() {
 		return false
 	}})
 	printTracks(tracks)
+}
+
+type database map[string]float32
+
+var db = database{"shoes": 50.0, "socks": 4.5}
+
+func (db database) list(w http.ResponseWriter, r *http.Request) {
+	for item, price := range db {
+		fmt.Fprintf(w, "%s:%v\n", item, price)
+	}
+}
+func (db database) price(w http.ResponseWriter, r *http.Request) {
+	item := r.URL.Query().Get("item")
+	if price, ok := db[item]; ok {
+		fmt.Fprintf(w, "%v\n", price)
+		return
+	}
+	w.WriteHeader(http.StatusNotFound)
+	fmt.Fprintf(w, "no such item:%s", item)
+	return
+}
+func chHander() {
+	mux := http.NewServeMux()
+	// http.HandlerFunc 为函数类型，其实现了http.Handler接口，serveHttp函数是调用自己
+	// mux.Handle("/list", http.HandlerFunc(db.list))
+	// mux.Handle("/price", http.HandlerFunc(db.price))
+
+	// 简化版
+	mux.HandleFunc("/list", db.list)
+	mux.HandleFunc("price", db.price)
+	http.ListenAndServe(":8000", mux)
 }
