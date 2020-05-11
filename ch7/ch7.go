@@ -17,6 +17,7 @@ func Ch7() {
 	// sleep()
 	// newParam()
 	chSort()
+	ch7Interface()
 }
 
 // 空接口，空接口可以接收任何类型
@@ -202,4 +203,47 @@ func chHander() {
 	mux.HandleFunc("/list", db.list)
 	mux.HandleFunc("price", db.price)
 	http.ListenAndServe(":8000", mux)
+}
+
+type human interface {
+	SayHi()
+}
+
+type student struct {
+	name  string
+	age   int32
+	money int32
+}
+
+type employee struct {
+	name string
+	age  int32
+	work string
+}
+
+func info(person human) {
+	person.SayHi()
+}
+
+func (s student) SayHi() {
+	fmt.Println("i am a student,my name is:", s.name)
+}
+
+func (e employee) SayHi() {
+	fmt.Println("i am a employee,my name is:", e.name)
+}
+
+func ch7Interface() {
+	stu := student{
+		name:  "tom",
+		age:   10,
+		money: 10,
+	}
+	emp := employee{
+		name: "lucy",
+		age:  18,
+		work: "engneer",
+	}
+	info(stu)
+	info(emp)
 }
