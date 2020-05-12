@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"os"
 	"time"
 )
 
@@ -11,6 +12,7 @@ import (
 func Ch8() {
 	// first()
 	clock()
+	netcat()
 }
 
 func spinner(delay time.Duration) {
@@ -34,6 +36,7 @@ func fib(x int) int {
 func first() {
 	go spinner(100 * time.Millisecond)
 	fmt.Printf("\nfib(45)=%d\n", fib(45))
+	return
 }
 
 func handConn(c net.Conn) {
@@ -48,6 +51,7 @@ func handConn(c net.Conn) {
 }
 
 // clock 并发时钟，第一个示例程序
+// nc localhost 8000命令行可以链接验证
 func clock() {
 	listener, _ := net.Listen("tcp", "localhost:8000")
 	for {
@@ -55,6 +59,24 @@ func clock() {
 		if err != nil {
 			continue
 		}
-		handConn(conn)
+		go handConn(conn)
 	}
+}
+
+// netcat go版本netcat，可以替代nc命令
+func netcat() {
+	conn, err := net.Dial("tcp", "localhost:8000")
+	if err != nil {
+		fmt.Println("net dial error,err=" + err.Error())
+	}
+	defer conn.Close()
+	io.Copy(os.Stdout, conn)
+	return
+}
+
+func mustCopy(dst io.Writer, src io.Reader) {
+	if _, err := io.Copy(dst, src); err != nil {
+		fmt.Println("io copy err,err=" + err.Error())
+	}
+	return
 }
