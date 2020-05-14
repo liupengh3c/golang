@@ -1,10 +1,12 @@
 package ch8
 
 import (
+	"bufio"
 	"fmt"
 	"io"
 	"net"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -50,6 +52,18 @@ func handConn(c net.Conn) {
 	}
 }
 
+func handConn2(c net.Conn) {
+	input := bufio.NewScanner(os.Stdin)
+	for input.Scan() {
+		fmt.Fprintln(c, "\t", strings.ToUpper(input.Text()))
+		time.Sleep(1 * time.Second)
+		fmt.Fprintln(c, "\t", input.Text())
+		time.Sleep(1 * time.Second)
+		fmt.Fprintln(c, "\t", strings.ToLower(input.Text()))
+	}
+	c.Close()
+}
+
 // clock 并发时钟，第一个示例程序
 // nc localhost 8000命令行可以链接验证
 func clock() {
@@ -59,7 +73,8 @@ func clock() {
 		if err != nil {
 			continue
 		}
-		go handConn(conn)
+		// go handConn(conn)
+		go handConn2(conn)
 	}
 }
 
