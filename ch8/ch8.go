@@ -13,8 +13,9 @@ import (
 // Ch8 第八章入口函数
 func Ch8() {
 	// first()
-	clock()
-	// netcat()
+	// clock()
+	// netcat2()
+	pipe()
 }
 
 func spinner(delay time.Duration) {
@@ -106,13 +107,13 @@ func mustCopy2(dst io.Writer, src io.Reader) {
 
 // netcat go版本netcat，可以替代nc命令
 func netcat2() {
-	conn, err := net.Dial("tcp", "localhost:8000")
+	conn, err := net.Dial("tcp", "106.13.105.231:8000")
 	if err != nil {
 		fmt.Println("net dial error,err=" + err.Error())
 	}
 	defer conn.Close()
 	go mustCopy(os.Stdout, conn)
-	mustCopy(os.Stdout, conn)
+	mustCopy(conn, os.Stdout)
 	return
 }
 
@@ -126,5 +127,31 @@ func test(index int) {
 func tests() {
 	for i := 0; i < 2; i++ {
 		go test(i * 10)
+	}
+}
+
+func pipe() {
+	naturals := make(chan int)
+	squares := make(chan int)
+	go func() {
+		for i := 0; ; i++ {
+			naturals <- i
+			time.Sleep(1 * time.Second)
+		}
+	}()
+
+	go func() {
+		for {
+			x := <-naturals
+			squares <- x * x
+		}
+	}()
+	// for {
+	// 	fmt.Println(<-squares)
+	// }
+
+	// channel上没有数据后，循环会自动结束
+	for x := range squares {
+		fmt.Println(x)
 	}
 }
