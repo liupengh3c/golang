@@ -95,3 +95,16 @@ func mustCopy(dst io.Writer, src io.Reader) {
 	}
 	return
 }
+
+var ch = make(chan int)
+
+func test(index int) {
+	for i := 0; i < 10; i++ {
+		ch <- i + 1 + index
+	}
+}
+func tests() {
+	for i := 0; i < 2; i++ {
+		go test(i * 10)
+	}
+}
