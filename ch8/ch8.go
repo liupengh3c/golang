@@ -78,6 +78,13 @@ func clock() {
 	}
 }
 
+func mustCopy(dst io.Writer, src io.Reader) {
+	if _, err := io.Copy(dst, src); err != nil {
+		fmt.Println("io copy err,err=" + err.Error())
+	}
+	return
+}
+
 // netcat go版本netcat，可以替代nc命令
 func netcat() {
 	conn, err := net.Dial("tcp", "localhost:8000")
@@ -85,14 +92,26 @@ func netcat() {
 		fmt.Println("net dial error,err=" + err.Error())
 	}
 	defer conn.Close()
-	io.Copy(os.Stdout, conn)
+	mustCopy(os.Stdout, conn)
 	return
 }
 
-func mustCopy(dst io.Writer, src io.Reader) {
+func mustCopy2(dst io.Writer, src io.Reader) {
 	if _, err := io.Copy(dst, src); err != nil {
 		fmt.Println("io copy err,err=" + err.Error())
 	}
+	return
+}
+
+// netcat go版本netcat，可以替代nc命令
+func netcat2() {
+	conn, err := net.Dial("tcp", "localhost:8000")
+	if err != nil {
+		fmt.Println("net dial error,err=" + err.Error())
+	}
+	defer conn.Close()
+	go mustCopy(os.Stdout, conn)
+	mustCopy(os.Stdout, conn)
 	return
 }
 
