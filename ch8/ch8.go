@@ -14,7 +14,7 @@ import (
 func Ch8() {
 	// first()
 	clock()
-	netcat()
+	// netcat()
 }
 
 func spinner(delay time.Duration) {
@@ -73,6 +73,7 @@ func clock() {
 		if err != nil {
 			continue
 		}
+		fmt.Println("a connecting is coming")
 		// go handConn(conn)
 		go handConn2(conn)
 	}
