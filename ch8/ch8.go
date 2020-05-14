@@ -53,7 +53,7 @@ func handConn(c net.Conn) {
 }
 
 func handConn2(c net.Conn) {
-	input := bufio.NewScanner(os.Stdin)
+	input := bufio.NewScanner(c)
 	for input.Scan() {
 		fmt.Fprintln(c, "\t", strings.ToUpper(input.Text()))
 		time.Sleep(1 * time.Second)
