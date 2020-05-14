@@ -7,6 +7,7 @@ import (
 	"net"
 	"os"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -15,7 +16,8 @@ func Ch8() {
 	// first()
 	// clock()
 	// netcat2()
-	pipe()
+	// pipe()
+	Noname()
 }
 
 func spinner(delay time.Duration) {
@@ -153,5 +155,33 @@ func pipe() {
 	// channel上没有数据后，循环会自动结束
 	for x := range squares {
 		fmt.Println(x)
+	}
+}
+
+// Noname 并发匿名函数测试
+func Noname() {
+	ch := make(chan int)
+	var wg sync.WaitGroup
+	da := []string{"数据结构", "语文", "数学", "C语言"}
+	for _, v := range da {
+		wg.Add(1)
+		go func(s string) {
+			defer wg.Done()
+			ch <- len(s)
+			fmt.Println(s)
+		}(v)
+	}
+	go func() {
+		wg.Wait()
+		close(ch)
+	}()
+
+	// 在主协程中wait会阻塞
+	// wg.Wait()
+	// close(ch)
+
+	// 循环结束的条件是channel关闭，所以wait的goroutine在wait结束后必须显式关闭channel
+	for v := range ch {
+		fmt.Println(v)
 	}
 }
