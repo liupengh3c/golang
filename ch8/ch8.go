@@ -2,11 +2,14 @@ package ch8
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 	"time"
@@ -21,7 +24,9 @@ func Ch8() {
 	// netcat2()
 	// pipe()
 	// Noname()
-	ch8Mul()
+	// ch8Mul()
+	// ch8Tick2()
+	ch8Dir()
 }
 
 func spinner(delay time.Duration) {
@@ -275,4 +280,77 @@ func ch8Mul() {
 		}
 	}
 	fmt.Printf("n=%v", n)
+}
+
+// 8.7
+
+func ch8Tick() {
+	tick := time.Tick(1 * time.Second)
+	for i := 10; i >= 0; i-- {
+		fmt.Printf("%d\n", i)
+		fmt.Println(<-tick)
+	}
+}
+
+func ch8Tick2() {
+	tick := time.Tick(1 * time.Second)
+	abort := make(chan struct{})
+	go func(ch chan struct{}) {
+		fmt.Println("enter read input")
+		// 会阻塞，一直等待输入
+		os.Stdin.Read(make([]byte, 1))
+		fmt.Println("read user input")
+		ch <- struct{}{}
+	}(abort)
+	for i := 10; i >= 0; i-- {
+		fmt.Printf("%d\n", i)
+		select {
+		case <-abort:
+			fmt.Println("stop---------------")
+			return
+		case <-tick:
+
+		case <-time.After(10 * time.Second):
+			fmt.Println("begin")
+			// default:
+			// 	fmt.Println("default")
+		}
+	}
+}
+func dirents(dir string) []os.FileInfo {
+	entries, err := ioutil.ReadDir(dir)
+	if err != nil {
+		return nil
+	}
+	return entries
+}
+func walkDir(dir string, filesize chan<- int64) {
+	for _, entry := range dirents(dir) {
+		if entry.IsDir() {
+			walkDir(filepath.Join(dir, entry.Name()), filesize)
+		} else {
+			filesize <- entry.Size()
+		}
+	}
+}
+
+func ch8Dir() {
+	flag.Parse()
+	roots := flag.Args()
+	if len(roots) == 0 {
+		roots = []string{"."}
+	}
+	fileSize := make(chan int64)
+	go func() {
+		for _, root := range roots {
+			walkDir(root, fileSize)
+		}
+		close(fileSize)
+	}()
+	cnt := 1
+	for size := range fileSize {
+		cnt++
+		// fmt.Printf("the %d file,size=%[1]v\n", size)
+		fmt.Printf("the %d file,size=%.1f GB\n", cnt, float64(size)/1e9)
+	}
 }
