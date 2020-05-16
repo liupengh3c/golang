@@ -26,9 +26,15 @@ func Ch8() {
 	// Noname()
 	// ch8Mul()
 	// ch8Tick2()
-	ch8Dir()
+	ch8DirMul2()
 }
 
+func timeCost() func() {
+	st := time.Now()
+	return func() {
+		fmt.Printf("time cost=%v\n", time.Since(st))
+	}
+}
 func spinner(delay time.Duration) {
 	for {
 		for _, r := range `-\|/` {
@@ -324,17 +330,18 @@ func dirents(dir string) []os.FileInfo {
 	}
 	return entries
 }
-func walkDir(dir string, filesize chan<- int64) {
+func walkDir(dir string, fileSize chan<- int64) {
 	for _, entry := range dirents(dir) {
 		if entry.IsDir() {
-			walkDir(filepath.Join(dir, entry.Name()), filesize)
+			walkDir(filepath.Join(dir, entry.Name()), fileSize)
 		} else {
-			filesize <- entry.Size()
+			fileSize <- entry.Size()
 		}
 	}
 }
 
 func ch8Dir() {
+	defer timeCost()()
 	flag.Parse()
 	roots := flag.Args()
 	if len(roots) == 0 {
@@ -353,4 +360,114 @@ func ch8Dir() {
 		// fmt.Printf("the %d file,size=%[1]v\n", size)
 		fmt.Printf("the %d file,size=%.1f GB\n", cnt, float64(size)/1e9)
 	}
+}
+
+// walkDir2,并发递归调用
+func walkDir2(dir string, n *sync.WaitGroup, fileSizes chan<- int64) {
+	defer n.Done()
+	for _, entry := range dirents2(dir) {
+		if entry.IsDir() {
+			n.Add(1)
+			subdir := filepath.Join(dir, entry.Name())
+			go walkDir2(subdir, n, fileSizes)
+		} else {
+			fileSizes <- entry.Size()
+		}
+	}
+}
+func ch8DirMul2() {
+	defer timeCost()()
+	flag.Parse()
+	var done = make(chan struct{})
+	// Determine the initial directories.
+	roots := flag.Args()
+	if len(roots) == 0 {
+		roots = []string{"."}
+	}
+	go func() {
+		os.Stdin.Read(make([]byte, 1))
+		done <- struct{}{}
+	}()
+	//!+
+	// Traverse each root of the file tree in parallel.
+	fileSizes := make(chan int64)
+	var n sync.WaitGroup
+	for _, root := range roots {
+		n.Add(1)
+		go walkDir2(root, &n, fileSizes)
+	}
+	go func() {
+		n.Wait()
+		close(fileSizes)
+	}()
+	cnt := 0
+	// for size := range fileSizes {
+	// 	cnt++
+	// 	fmt.Printf("the %d file,size=%.1f GB\n", cnt, float64(size)/1e9)
+	// }
+loop:
+	//!+3
+	for {
+		select {
+		case <-done:
+			// for range fileSizes {
+			// 	// Do nothing.
+			// }
+			fmt.Println("game over")
+			return
+		case size, ok := <-fileSizes:
+			if !ok {
+				break loop
+			}
+			cnt++
+			fmt.Printf("the %d file,size=%.1f GB\n", cnt, float64(size)/1e9)
+		}
+	}
+}
+func ch8DirMul() {
+	defer timeCost()()
+	flag.Parse()
+	wg := sync.WaitGroup{}
+	roots := flag.Args()
+	if len(roots) == 0 {
+		roots = []string{"."}
+	}
+	fileSize := make(chan int64)
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		for _, root := range roots {
+			wg.Add(1)
+			walkDir2(root, &wg, fileSize)
+		}
+		// close(fileSize)
+	}()
+
+	go func() {
+		wg.Wait()
+		close(fileSize)
+	}()
+	cnt := 0
+	for size := range fileSize {
+		cnt++
+		fmt.Printf("the %d file,size=%.1f GB\n", cnt, float64(size)/1e9)
+	}
+}
+func printDiskUsage(nfiles, nbytes int64) {
+	fmt.Printf("%d files  %.1f GB\n", nfiles, float64(nbytes)/1e9)
+}
+
+var sema = make(chan struct{}, 20)
+
+// dirents returns the entries of directory dir.
+func dirents2(dir string) []os.FileInfo {
+	sema <- struct{}{}
+	defer func() { <-sema }()
+
+	entries, err := ioutil.ReadDir(dir)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "du: %v\n", err)
+		return nil
+	}
+	return entries
 }

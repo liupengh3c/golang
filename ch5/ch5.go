@@ -247,6 +247,7 @@ func ch5Extract() {
 }
 
 // 延迟函数,trace会首先执行，返回值函数会延迟执行
+// 利用延迟函数做时间统计
 func bigSlow() {
 	defer trace("bigSlow")()
 	time.Sleep(10 * time.Second)
