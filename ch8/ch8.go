@@ -527,8 +527,7 @@ func handleConn(conn net.Conn) {
 	for input.Scan() {
 		messages <- who + ": " + input.Text()
 	}
-	// NOTE: ignoring potential errors from input.Err()
-
+	fmt.Println("a connect is leaving")
 	leaving <- ch
 	messages <- who + " has left"
 	conn.Close()

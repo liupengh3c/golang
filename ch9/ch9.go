@@ -13,7 +13,13 @@ import (
 func Ch9() {
 	// withdraw()
 	// ch9Memo()
-	ch9Memo()
+	ch9Max()
+}
+
+// 如果是两个核的话，0和1的打印次数差不多
+func ch9Max() {
+	go fmt.Print(0)
+	fmt.Print(1)
 }
 
 type money struct {
