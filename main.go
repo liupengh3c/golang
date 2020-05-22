@@ -1,6 +1,6 @@
 package main
 
-import "golang/ch9"
+import "golang/ch10"
 
 func main() {
 	// ch1.GetStdCmd()
@@ -8,7 +8,7 @@ func main() {
 	// ch1.Dup3()
 	// ch1.Lissajous()
 	//*************爬虫*************//
-	// ch := make(chan string)
+	// ch := make(chan string)go
 	// for _, url := range os.Args[1:] {
 	// 	go ch1.ParallelFetch(url, ch)
 	// }
@@ -68,5 +68,8 @@ func main() {
 	// ch8.Ch8()
 
 	//--------------ch9示例函数--------------//
-	ch9.Ch9()
+	// ch9.Ch9()
+
+	//--------------ch10示例函数--------------//
+	ch10.Ch10()
 }
