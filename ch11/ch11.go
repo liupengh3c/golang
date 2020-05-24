@@ -5,9 +5,12 @@ import (
 	"unicode"
 )
 
+// Ch11 第十一章入口函数
 func Ch11() {
 	fmt.Println(IsPalindrome("abcba"))
 }
+
+// IsPalindrome 是否回文字符串
 func IsPalindrome(s string) bool {
 	var letters []rune
 	for _, r := range s {
