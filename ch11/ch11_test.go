@@ -29,6 +29,9 @@ func TestRandomPalindromes(t *testing.T) {
 	}
 }
 
+// 性能剖析,会临时生成ch11.test可执行文件
+// go test -run=NONE -bench=BenchmarkIsPalindrome -cpuprofile=cpu.log golang/ch11
+// go tool pprof -text -nodecount=10 ./ch11.test cpu.log
 func BenchmarkIsPalindrome(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		IsPalindrome("A man, a plan, a canal: Panama")
