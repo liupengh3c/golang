@@ -24,6 +24,8 @@ func rType() {
 	fmt.Println(t.String())
 
 	var w io.Writer = os.Stdout
+
+	fmt.Println("reflect.TypeOf")
 	fmt.Println(reflect.TypeOf(w))
 
 	fmt.Printf("%T\n", w)
@@ -40,6 +42,7 @@ func rValue() {
 		age:  18,
 	}
 	data = stu
+	fmt.Println("reflect.valueof")
 	fmt.Println(reflect.ValueOf(data))
 	fmt.Println(reflect.ValueOf(data).Kind())
 	fmt.Println(reflect.ValueOf(data).Type())
