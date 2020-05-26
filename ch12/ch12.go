@@ -10,9 +10,10 @@ import (
 
 // Ch12 第12章入口函数
 func Ch12() {
-	rType()
-	rValue()
-	testDis()
+	// rType()
+	// rValue()
+	// testDis()
+	refSet()
 }
 
 func rType() {
@@ -29,6 +30,7 @@ func rType() {
 	fmt.Println(reflect.TypeOf(w))
 
 	fmt.Printf("%T\n", w)
+
 }
 
 func rValue() {
@@ -145,4 +147,17 @@ func testDis() {
 		},
 	}
 	display("strangelove", reflect.ValueOf(strangelove))
+}
+
+func refSet() {
+	x := 2
+	b := reflect.ValueOf(&x).Elem()
+	b.SetInt(3)
+	fmt.Println(x)
+	fmt.Println(b.CanSet())
+
+	c := reflect.ValueOf(x)
+	fmt.Println(c.CanAddr())
+	// 判断是否可寻址、可更改
+	fmt.Println(c.CanSet())
 }

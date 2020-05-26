@@ -1,6 +1,6 @@
 package main
 
-import "golang/ch12"
+import "golang/ch13"
 
 func main() {
 	// ch1.GetStdCmd()
@@ -73,5 +73,7 @@ func main() {
 	//--------------ch10示例函数--------------//
 	// ch10.Ch10()
 	//--------------ch12示例函数--------------//
-	ch12.Ch12()
+	// ch12.Ch12()
+	//--------------ch13示例函数--------------//
+	ch13.Ch13()
 }
