@@ -2,6 +2,7 @@ package ch13
 
 import (
 	"fmt"
+	"reflect"
 	"unsafe"
 )
 
@@ -36,4 +37,11 @@ func first() {
 	fmt.Println("n1.age offset:", unsafe.Offsetof(n1.age))
 	fmt.Println("n1.num offset:", unsafe.Offsetof(n1.num))
 	fmt.Println("n1.b offset:", unsafe.Offsetof(n1.b))
+
+	fmt.Println("valueof.type=", reflect.ValueOf(n1).Type())
+	fmt.Println("valueof.kind=", reflect.ValueOf(n1).Kind())
+	fmt.Println("align=", unsafe.Alignof(n1))
+
+	var b = 78
+	fmt.Println("valueof.elem=", reflect.ValueOf(&b).Elem())
 }
